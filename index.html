@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM WhatsApp Integration</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="email"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            /* Mobile phone */
+            .container {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            input[type="text"], input[type="email"], input[type="number"], button {
+                font-size: 1rem;
+                padding: 10px;
+            }
+
+            table, th, td {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1024px) {
+            /* Tablet */
+            .container {
+                width: 80%;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            input[type="text"], input[type="email"], input[type="number"], button {
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+
+            table, th, td {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            /* Desktop */
+            .container {
+                max-width: 60%;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            input[type="text"], input[type="email"], input[type="number"], button {
+                font-size: 1.2rem;
+                padding: 14px;
+            }
+
+            table, th, td {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Customer Management (CRM)</h2>
+    <input type="text" id="customerName" placeholder="Customer Name" required>
+    <input type="email" id="customerEmail" placeholder="Email" required>
+    <input type="text" id="customerPhone" placeholder="Phone" required>
+    <button onclick="addCustomer()">Add Customer</button>
+
+    <table id="customerTable">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    const customerTable = document.getElementById('customerTable');
+
+    function addCustomer() {
+        const name = document.getElementById('customerName').value;
+        const email = document.getElementById('customerEmail').value;
+        const phone = document.getElementById('customerPhone').value;
+
+        if (name && email && phone) {
+            const row = customerTable.insertRow();
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${email}</td>
+                <td>${phone}</td>
+                <td>
+                    <button onclick="editCustomer(this)">Edit</button>
+                    <button onclick="deleteCustomer(this)">Delete</button>
+                    <button onclick="sendMessage('${phone}')">Send WhatsApp</button>
+                </td>
+            `;
+
+            // Clear input fields
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerEmail').value = '';
+            document.getElementById('customerPhone').value = '';
+        } else {
+            alert('Please fill all fields');
+        }
+    }
+
+    function editCustomer(button) {
+        const row = button.parentElement.parentElement;
+        const name = row.cells[0].textContent;
+        const email = row.cells[1].textContent;
+        const phone = row.cells[2].textContent;
+
+        // Set current values in the input fields
+        document.getElementById('customerName').value = name;
+        document.getElementById('customerEmail').value = email;
+        document.getElementById('customerPhone').value = phone;
+
+        // Remove the current row for editing
+        row.remove();
+    }
+
+    function deleteCustomer(button) {
+        // Remove the corresponding row
+        const row = button.parentElement.parentElement;
+        row.remove();
+    }
+
+    function sendMessage(phone) {
+        // Format phone number for WhatsApp Web
+        const formattedPhone = phone.replace(/\D/g, ''); // Remove non-numeric characters
+        const url = `https://wa.me/${formattedPhone}?text=Hello, we are reaching out regarding your recent inquiry.`;
+
+        // Open WhatsApp web in a new tab
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
